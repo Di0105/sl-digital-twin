@@ -43,6 +43,8 @@ jobs:
 
       - name: Copy 3D Tiles
         run: |
+          mkdir -p app/dist/cesium
+          cp -R app/dist/sl-digital-twin/cesium/. app/dist/cesium/
           mkdir -p app/dist/tiles
           cp -R tiles/. app/dist/tiles/
           touch app/dist/.nojekyll
