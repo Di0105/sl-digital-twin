@@ -1,0 +1,29 @@
+{
+  "name": "sl-digital-twin",
+  "private": false,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Sri Lanka reality-mesh digital twin (Cesium/Resium WebGIS)",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "cesium": "^1.122.0",
+    "proj4": "^2.11.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "resium": "^1.19.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "@types/proj4": "^2.5.5",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.2",
+    "vite-plugin-cesium": "^1.2.23"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "id": "yellow_house",
+  "name": "yellow_house",
+  "place": "Yellow House, Galle Dutch Fort",
+  "source_3sm": "Productions/YELLOWHOUSE_FINAL2/YELLOWHOUSE_FINAL2.3sm",
+  "srs": "EPSG:32644+5773 (WGS84 / UTM zone 44N + EGM96 height)",
+  "utm_zone": "44N",
+  "centroid_utm": {
+    "easting": 413497.13192297134,
+    "northing": 666376.7382922515,
+    "z_egm96": 136.08331221560596
+  },
+  "centroid_wgs84": {
+    "lon": 80.2183508284828,
+    "lat": 6.028135877632555,
+    "h_ellipsoidal": 36.79788562707719,
+    "geoid_undulation_egm96": -99.28542658852876
+  },
+  "ecef_origin": {
+    "x": 1077660.5906194495,
+    "y": 6250925.235414069,
+    "z": 665356.1444367422
+  },
+  "bbox_local_enu_m": {
+    "min": [
+      -64.44257220755563,
+      -24.598074108367676,
+      -9.236938138323456
+    ],
+    "max": [
+      80.30483843764222,
+      34.225386999430235,
+      13.945491131617972
+    ]
+  },
+  "gltf_axis_order": "[East, Up, -North] (Y-up); elevation = index 1",
+  "base_height_local_m": -8.625322341918945,
+  "top_height_local_m": 10.428744316101074,
+  "vertices": 217437,
+  "triangles": 372280,
+  "leaf_nodes": 18,
+  "georef_method": "drone-GPS (PositionMetadata), no GCP/RTK; projection exact, absolute horizontal ~few m (drone-GPS), vertical = EGM96 orthometric (~5-15 m absolute, terrain-snap in viewer)",
+  "geoid_grid_applied": true,
+  "tileset": "tileset.json",
+  "content": "content.glb"
+}

@@ -1,0 +1,46 @@
+{
+  "id": "lighthouse",
+  "name": "lighthouse",
+  "place": "Galle Lighthouse, Galle Dutch Fort",
+  "source_3sm": "Productions/lighthouse_combined/Production_1.3sm",
+  "srs": "EPSG:32644+5773 (WGS84 / UTM zone 44N + EGM96 height)",
+  "utm_zone": "44N",
+  "centroid_utm": {
+    "easting": 413612.90573418175,
+    "northing": 665980.59101406,
+    "z_egm96": 144.451288460245
+  },
+  "centroid_wgs84": {
+    "lon": 80.21940202715592,
+    "lat": 6.024554039816475,
+    "h_ellipsoidal": 45.142947790891085,
+    "geoid_undulation_egm96": -99.30834066935391
+  },
+  "ecef_origin": {
+    "x": 1077554.3796242008,
+    "y": 6250994.165400222,
+    "z": 664963.1040133754
+  },
+  "bbox_local_enu_m": {
+    "min": [
+      -9.443194648342178,
+      -7.415862468219988,
+      -11.422044191210775
+    ],
+    "max": [
+      9.44319455934863,
+      7.399489233872586,
+      18.41126327752354
+    ]
+  },
+  "gltf_axis_order": "[East, Up, -North] (Y-up); elevation = index 1",
+  "base_height_local_m": -8.77418041229248,
+  "top_height_local_m": 17.446178436279297,
+  "vertices": 386384,
+  "triangles": 601007,
+  "leaf_nodes": 37,
+  "georef_method": "drone-GPS (PositionMetadata), no GCP/RTK; projection exact, absolute horizontal ~few m (drone-GPS), vertical = EGM96 orthometric (~5-15 m absolute, terrain-snap in viewer)",
+  "geoid_grid_applied": true,
+  "tileset": "tileset.json",
+  "content": "content.glb"
+}

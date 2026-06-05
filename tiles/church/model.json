@@ -1,0 +1,46 @@
+{
+  "id": "church",
+  "name": "church",
+  "place": "Galle Fort Church, Galle Dutch Fort",
+  "source_3sm": "church_final/Production_3.3sm",
+  "srs": "EPSG:32644+5773 (WGS84 / UTM zone 44N + EGM96 height)",
+  "utm_zone": "44N",
+  "centroid_utm": {
+    "easting": 413558.5612739929,
+    "northing": 665992.0266374494,
+    "z_egm96": 143.08529562119452
+  },
+  "centroid_wgs84": {
+    "lon": 80.21891085107481,
+    "lat": 6.024656777204045,
+    "h_ellipsoidal": 43.77563047158924,
+    "geoid_undulation_egm96": -99.30966514960528
+  },
+  "ecef_origin": {
+    "x": 1077607.533525402,
+    "y": 6250982.412571281,
+    "z": 664974.2592042458
+  },
+  "bbox_local_enu_m": {
+    "min": [
+      -37.83523904640755,
+      -13.847384193923551,
+      -10.17706188872154
+    ],
+    "max": [
+      -5.092859451078265,
+      10.27796466954033,
+      10.264660077002047
+    ]
+  },
+  "gltf_axis_order": "[East, Up, -North] (Y-up); elevation = index 1",
+  "base_height_local_m": -9.901556015014648,
+  "top_height_local_m": 8.52807903289795,
+  "vertices": 293678,
+  "triangles": 488395,
+  "leaf_nodes": 20,
+  "georef_method": "drone-GPS (PositionMetadata), no GCP/RTK; projection exact, absolute horizontal ~few m (drone-GPS), vertical = EGM96 orthometric (~5-15 m absolute, terrain-snap in viewer)",
+  "geoid_grid_applied": true,
+  "tileset": "tileset.json",
+  "content": "content.glb"
+}

@@ -1,0 +1,174 @@
+:root {
+  --bg: #0d1218;
+  --panel: #161d27cc;
+  --panel-solid: #161d27;
+  --border: #2a3543;
+  --text: #e6edf3;
+  --muted: #8b97a6;
+  --accent: #ffb703;
+  --accent-2: #2d9cdb;
+  --good: #3ad29f;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+.app { position: relative; height: 100vh; width: 100vw; }
+.cesium-viewer,
+.cesium-viewer-cesiumWidgetContainer,
+.cesium-widget,
+.cesium-widget canvas {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+.cesium-widget canvas { display: block; }
+
+/* hide default cesium clutter we replace with our own UI */
+.cesium-viewer-bottom { display: none; }
+
+.sidebar {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 290px;
+  max-height: calc(100vh - 24px);
+  overflow-y: auto;
+  background: var(--panel);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  z-index: 10;
+}
+
+.title { font-size: 16px; font-weight: 700; margin: 0 0 2px; }
+.subtitle { font-size: 11px; color: var(--muted); margin: 0 0 12px; }
+
+.section-h {
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 14px 0 6px;
+}
+
+.model-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  background: #0f151d;
+  transition: border-color .15s, background .15s;
+}
+.model-item:hover { border-color: var(--accent-2); }
+.model-item.active { border-color: var(--accent); background: #1b1408; }
+.model-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); flex: none; }
+.model-name { font-size: 13px; font-weight: 600; }
+.model-place { font-size: 10.5px; color: var(--muted); }
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 2px;
+  font-size: 12.5px;
+}
+.toggle-row input { accent-color: var(--accent); }
+
+.btn {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #0f151d;
+  color: var(--text);
+  font-size: 12.5px;
+  cursor: pointer;
+}
+.btn:hover { border-color: var(--accent-2); }
+.btn.active { border-color: var(--accent); color: var(--accent); }
+.btn-row { display: flex; gap: 6px; }
+.btn-clear { color: #ff8a8a; border-color: #5a2a2a; }
+.btn-clear:hover { border-color: #ff8a8a; }
+.hint { font-size: 11px; color: var(--muted, #8a97a6); line-height: 1.5; margin: 2px 0 8px; }
+
+.attr {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 320px;
+  max-height: calc(100vh - 24px);
+  overflow-y: auto;
+  background: var(--panel);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  z-index: 10;
+}
+.attr-close { float: right; cursor: pointer; color: var(--muted); border: none; background: none; font-size: 16px; }
+.attr-group { margin-top: 12px; }
+.attr-row { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; padding: 3px 0; border-bottom: 1px dashed #222b36; }
+.attr-row span:first-child { color: var(--muted); }
+.attr-row span:last-child { font-variant-numeric: tabular-nums; text-align: right; }
+.pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 10.5px; border: 1px solid var(--border); color: var(--good); }
+
+.probe {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--panel-solid);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  z-index: 10;
+  display: flex;
+  gap: 16px;
+}
+.probe b { color: var(--accent); font-weight: 600; }
+
+.measure-readout {
+  position: absolute;
+  bottom: 56px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1b1408;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  z-index: 10;
+}
+
+.no-token {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  background: #2a1d1d;
+  border: 1px solid #5a3030;
+  color: #ffb3b3;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 11.5px;
+  max-width: 280px;
+  z-index: 10;
+}

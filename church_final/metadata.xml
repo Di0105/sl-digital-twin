@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ModelMetadata version="1">
+	<!--Spatial Reference System-->
+	<SRS>EPSG:32644+5773</SRS>
+	<Texture>
+		<ColorSource>Visible</ColorSource>
+	</Texture>
+</ModelMetadata>

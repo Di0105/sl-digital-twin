@@ -1,0 +1,13 @@
+# dependencies
+node_modules/
+dist/
+dist-ssr/
+
+# env: contains the Cesium ion token, never commit
+.env
+.env.local
+
+# logs / os
+*.log
+.DS_Store
+Thumbs.db

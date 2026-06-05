@@ -1,0 +1,46 @@
+{
+  "id": "university",
+  "name": "university",
+  "place": "University (Peradeniya area), Kandy region",
+  "source_3sm": "Productions/university_new/Production_1.3sm",
+  "srs": "EPSG:32644+5773 (WGS84 / UTM zone 44N + EGM96 height)",
+  "utm_zone": "44N",
+  "centroid_utm": {
+    "easting": 455160.64676316467,
+    "northing": 801817.896531394,
+    "z_egm96": 564.2296602374065
+  },
+  "centroid_wgs84": {
+    "lon": 80.59381403180515,
+    "lat": 7.25372853363361,
+    "h_ellipsoidal": 470.9169320573518,
+    "geoid_undulation_egm96": -93.3127281800547
+  },
+  "ecef_origin": {
+    "x": 1034183.6990338305,
+    "y": 6242814.3017804315,
+    "z": 800037.0437164751
+  },
+  "bbox_local_enu_m": {
+    "min": [
+      -35.91141830932766,
+      -43.841151612477695,
+      -11.862927444684148
+    ],
+    "max": [
+      35.86065057512868,
+      43.91452019329685,
+      12.655711868244282
+    ]
+  },
+  "gltf_axis_order": "[East, Up, -North] (Y-up); elevation = index 1",
+  "base_height_local_m": -9.50588321685791,
+  "top_height_local_m": 8.571290969848633,
+  "vertices": 1139363,
+  "triangles": 1838011,
+  "leaf_nodes": 97,
+  "georef_method": "drone-GPS (PositionMetadata), no GCP/RTK; projection exact, absolute horizontal ~few m (drone-GPS), vertical = EGM96 orthometric (~5-15 m absolute, terrain-snap in viewer)",
+  "geoid_grid_applied": true,
+  "tileset": "tileset.json",
+  "content": "content.glb"
+}

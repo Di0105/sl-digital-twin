@@ -1,0 +1,19 @@
+app/node_modules/
+app/dist/
+app/.tsbuild-node/
+app/*.tsbuildinfo
+app/.env
+app/.env.*
+!app/.env.example
+
+tools/**/__pycache__/
+*.pyc
+
+Project files/
+Productions/
+*.ccm
+*.ccm.bak
+*.bak
+
+.DS_Store
+Thumbs.db
