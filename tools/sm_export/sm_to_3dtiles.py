@@ -167,8 +167,11 @@ def _build_leaf_glb(node_name: str, gpos: np.ndarray, guv: np.ndarray,
         }],
         "textures": [{"sampler": 0, "source": 0}],
         "images": [{"bufferView": img_view, "mimeType": "image/jpeg"}],
-        "samplers": [{"magFilter": 9729, "minFilter": 9987,
-                      "wrapS": 10497, "wrapT": 10497}],
+        # LINEAR minification (no mipmaps) + CLAMP_TO_EDGE: ContextCapture node
+        # atlases pack patches over a black background, so mipmapping would
+        # average textured patches with black and turn surfaces dark at range.
+        "samplers": [{"magFilter": 9729, "minFilter": 9729,
+                      "wrapS": 33071, "wrapT": 33071}],
         "accessors": accessors,
         "bufferViews": buffer_views,
         "buffers": [{"byteLength": len(bin_buf)}],

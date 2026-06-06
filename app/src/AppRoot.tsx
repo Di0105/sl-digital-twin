@@ -3,7 +3,7 @@ import { Viewer as ResiumViewer, type CesiumComponentRef } from "resium";
 import {
   Viewer as CesiumViewer,
   createWorldImageryAsync,
-  OpenStreetMapImageryProvider,
+  UrlTemplateImageryProvider,
 } from "cesium";
 import { HAS_ION } from "./cesiumConfig";
 import { SceneController } from "./sceneController";
@@ -42,8 +42,15 @@ export default function App() {
       if (HAS_ION) {
         viewer.imageryLayers.addImageryProvider(await createWorldImageryAsync());
       } else {
+        // No Cesium ion token (e.g. GitHub Pages build): fall back to Esri World
+        // Imagery, which is token-free and still satellite (not OSM road tiles).
         viewer.imageryLayers.addImageryProvider(
-          new OpenStreetMapImageryProvider({ url: "https://tile.openstreetmap.org/" })
+          new UrlTemplateImageryProvider({
+            url:
+              "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+            maximumLevel: 19,
+            credit: "Imagery © Esri, Maxar, Earthstar Geographics",
+          })
         );
       }
       if (cancelled) return;
@@ -168,8 +175,9 @@ export default function App() {
 
       {!HAS_ION && (
         <div className="no-token">
-          No Cesium ion token in <code>.env</code> — using OpenStreetMap imagery and a flat ellipsoid
-          (no world terrain / terrain-snap). Add <code>VITE_CESIUM_ION_TOKEN</code> and restart.
+          No Cesium ion token in <code>.env</code> — using Esri World Imagery on a flat ellipsoid
+          (no world terrain / terrain-snap). Add <code>VITE_CESIUM_ION_TOKEN</code> and restart for
+          Cesium World Imagery.
         </div>
       )}
     </div>

@@ -20,3 +20,8 @@ Productions/
 
 .DS_Store
 Thumbs.db
+
+# corrupt exFAT ghost entry (use AppRoot.tsx instead)
+app/src/App.tsx
+# texture diagnostics
+tiles/**/_*.png
