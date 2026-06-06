@@ -91,7 +91,11 @@ def export(sm_path: str, out_dir: str, flip_v: bool = False) -> None:
             uv_faces = read_blob_uint32(uv_index_data)
 
             cur.execute(
-                "SELECT TexData FROM SMTexture WHERE NodeId=?", (nid,))
+                "SELECT TexID FROM SMNodeHeader WHERE NodeId=?", (nid,))
+            row = cur.fetchone()
+            tex_id = row[0] if row and row[0] is not None else nid
+            cur.execute(
+                "SELECT TexData FROM SMTexture WHERE NodeId=?", (tex_id,))
             tex_data = cur.fetchone()[0]
             tex_name = f"node{nid}.jpg"
             (tex_dir / tex_name).write_bytes(extract_jpeg(tex_data))

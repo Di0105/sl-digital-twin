@@ -217,7 +217,12 @@ def convert(sm_path: str, out_dir: str, name: str, place: str = "") -> dict:
         uvs = np.asarray(read_blob_uv(uv_data), dtype=np.float64).reshape(-1, 2)
         uv_idx = np.asarray(read_blob_uint32(uv_index_data), dtype=np.int64) - 1
 
-        cur.execute("SELECT TexData FROM SMTexture WHERE NodeId=?", (nid,))
+        # ContextCapture stores the texture under SMNodeHeader.TexID, which
+        # differs from the geometry NodeId. The UVs index into that atlas.
+        cur.execute("SELECT TexID FROM SMNodeHeader WHERE NodeId=?", (nid,))
+        row = cur.fetchone()
+        tex_id = row[0] if row and row[0] is not None else nid
+        cur.execute("SELECT TexData FROM SMTexture WHERE NodeId=?", (tex_id,))
         jpeg = extract_jpeg(cur.fetchone()[0])
 
         # re-weld (pos, uv) corner pairs into unique glTF vertices
