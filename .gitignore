@@ -9,6 +9,9 @@ app/.env.*
 tools/**/__pycache__/
 *.pyc
 
+# Debug/scratch artifacts from diagnostic scripts
+_texdump/
+
 Project files/
 Productions/
 *.ccm

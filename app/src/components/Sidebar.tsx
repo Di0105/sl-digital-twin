@@ -21,7 +21,7 @@ interface Props {
 
 const LAYER_LABELS: Record<keyof LayerState, string> = {
   imagery: "Satellite imagery",
-  terrain: "Terrain (DTM)",
+  terrain: "Basemap globe",
   models: "Reality-mesh models",
   labels: "Model labels",
 };

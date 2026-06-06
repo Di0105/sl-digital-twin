@@ -2,7 +2,7 @@
   "asset": {
     "version": "1.1"
   },
-  "geometricError": 157.95390939146134,
+  "geometricError": 177.95390939146134,
   "root": {
     "transform": [
       -0.9854623630436575,
@@ -23,25 +23,376 @@
       1.0
     ],
     "boundingVolume": {
-      "box": [
+      "sphere": [
         7.931133115043295,
         4.813656445531279,
         2.354276496647258,
-        72.37370532259892,
-        0,
-        0,
-        0,
-        29.411730553898956,
-        0,
-        0,
-        0,
-        11.591214634970715
+        88.97695469573067
       ]
     },
-    "geometricError": 0.0,
+    "geometricError": 177.95390939146134,
     "refine": "ADD",
-    "content": {
-      "uri": "content.glb"
-    }
+    "children": [
+      {
+        "boundingVolume": {
+          "sphere": [
+            -54.200313653756744,
+            -18.445054622056258,
+            2.954831913219128,
+            15.42053891923041
+          ]
+        },
+        "geometricError": 0.0,
+        "refine": "ADD",
+        "content": {
+          "uri": "nodes/node_25.glb"
+        },
+        "extras": {
+          "nodeId": 25,
+          "vertices": 14323,
+          "triangles": 23944
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            -50.99823745450031,
+            2.570279154122419,
+            0.36847420160292144,
+            10.747086367861495
+          ]
+        },
+        "geometricError": 0.0,
+        "refine": "ADD",
+        "content": {
+          "uri": "nodes/node_27.glb"
+        },
+        "extras": {
+          "nodeId": 27,
+          "vertices": 1696,
+          "triangles": 2123
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            -34.670011966632515,
+            -10.937830839444567,
+            1.5698402553233057,
+            20.304833771778668
+          ]
+        },
+        "geometricError": 0.0,
+        "refine": "ADD",
+        "content": {
+          "uri": "nodes/node_28.glb"
+        },
+        "extras": {
+          "nodeId": 28,
+          "vertices": 26656,
+          "triangles": 46944
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            -11.55286157118824,
+            -8.164496020652882,
+            0.9855458330629121,
+            19.078294091677463
+          ]
+        },
+        "geometricError": 0.0,
+        "refine": "ADD",
+        "content": {
+          "uri": "nodes/node_29.glb"
+        },
+        "extras": {
+          "nodeId": 29,
+          "vertices": 18626,
+          "triangles": 32116
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            -34.68196747160497,
+            3.838041119957197,
+            0.0310679798995257,
+            16.580627082486885
+          ]
+        },
+        "geometricError": 0.0,
+        "refine": "ADD",
+        "content": {
+          "uri": "nodes/node_30.glb"
+        },
+        "extras": {
+          "nodeId": 30,
+          "vertices": 10423,
+          "triangles": 16962
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            -11.56604748129931,
+            5.4835768419043625,
+            0.8153224059837649,
+            18.07551897356287
+          ]
+        },
+        "geometricError": 0.0,
+        "refine": "ADD",
+        "content": {
+          "uri": "nodes/node_31.glb"
+        },
+        "extras": {
+          "nodeId": 31,
+          "vertices": 15226,
+          "triangles": 26366
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            11.568082924080128,
+            -5.355153177721496,
+            0.0189765617483193,
+            17.801580103525673
+          ]
+        },
+        "geometricError": 0.0,
+        "refine": "ADD",
+        "content": {
+          "uri": "nodes/node_32.glb"
+        },
+        "extras": {
+          "nodeId": 32,
+          "vertices": 12662,
+          "triangles": 20746
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            34.67632167598035,
+            -3.043471279756103,
+            -1.8522213817439441,
+            16.103323305191722
+          ]
+        },
+        "geometricError": 0.0,
+        "refine": "ADD",
+        "content": {
+          "uri": "nodes/node_33.glb"
+        },
+        "extras": {
+          "nodeId": 33,
+          "vertices": 7876,
+          "triangles": 11796
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            34.63745870752611,
+            7.451007969420101,
+            0.9335234886136936,
+            18.85163956661893
+          ]
+        },
+        "geometricError": 0.0,
+        "refine": "ADD",
+        "content": {
+          "uri": "nodes/node_34.glb"
+        },
+        "extras": {
+          "nodeId": 34,
+          "vertices": 20372,
+          "triangles": 36135
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            34.62968822257757,
+            22.17318792794911,
+            2.289070135596101,
+            17.787933472100214
+          ]
+        },
+        "geometricError": 0.0,
+        "refine": "ADD",
+        "content": {
+          "uri": "nodes/node_35.glb"
+        },
+        "extras": {
+          "nodeId": 35,
+          "vertices": 5845,
+          "triangles": 9974
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            11.552662668453019,
+            7.731819381196889,
+            7.144042215352715,
+            16.43636892635969
+          ]
+        },
+        "geometricError": 0.0,
+        "refine": "ADD",
+        "content": {
+          "uri": "nodes/node_36.glb"
+        },
+        "extras": {
+          "nodeId": 36,
+          "vertices": 23148,
+          "triangles": 39012
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            7.761680237026706,
+            32.17320970538209,
+            8.660854552377982,
+            9.523003735842716
+          ]
+        },
+        "geometricError": 0.0,
+        "refine": "ADD",
+        "content": {
+          "uri": "nodes/node_37.glb"
+        },
+        "extras": {
+          "nodeId": 37,
+          "vertices": 13,
+          "triangles": 8
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            50.67049858335211,
+            -1.2237740331202658,
+            -4.803130051895536,
+            8.262713110853607
+          ]
+        },
+        "geometricError": 0.0,
+        "refine": "ADD",
+        "content": {
+          "uri": "nodes/node_38.glb"
+        },
+        "extras": {
+          "nodeId": 38,
+          "vertices": 591,
+          "triangles": 761
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            54.7512657589522,
+            6.442160826033844,
+            0.7376424686857082,
+            16.388584440501717
+          ]
+        },
+        "geometricError": 0.0,
+        "refine": "ADD",
+        "content": {
+          "uri": "nodes/node_39.glb"
+        },
+        "extras": {
+          "nodeId": 39,
+          "vertices": 14057,
+          "triangles": 24927
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            54.737109600909136,
+            19.038432629993796,
+            3.832678502929041,
+            14.533935447882234
+          ]
+        },
+        "geometricError": 0.0,
+        "refine": "ADD",
+        "content": {
+          "uri": "nodes/node_40.glb"
+        },
+        "extras": {
+          "nodeId": 40,
+          "vertices": 9647,
+          "triangles": 17570
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            71.75604164804264,
+            8.318033180506825,
+            0.6927393502763701,
+            16.140145716633832
+          ]
+        },
+        "geometricError": 0.0,
+        "refine": "ADD",
+        "content": {
+          "uri": "nodes/node_41.glb"
+        },
+        "extras": {
+          "nodeId": 41,
+          "vertices": 10302,
+          "triangles": 17800
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            71.12227343817338,
+            21.641518084333207,
+            3.611102193686099,
+            14.422317295877054
+          ]
+        },
+        "geometricError": 0.0,
+        "refine": "ADD",
+        "content": {
+          "uri": "nodes/node_42.glb"
+        },
+        "extras": {
+          "nodeId": 42,
+          "vertices": 10900,
+          "triangles": 19254
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            -55.32583861251207,
+            -6.206121708777397,
+            3.731768801086813,
+            17.010848704352227
+          ]
+        },
+        "geometricError": 0.0,
+        "refine": "ADD",
+        "content": {
+          "uri": "nodes/node_43.glb"
+        },
+        "extras": {
+          "nodeId": 43,
+          "vertices": 15074,
+          "triangles": 25842
+        }
+      }
+    ]
   }
 }

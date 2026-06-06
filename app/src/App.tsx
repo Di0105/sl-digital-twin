@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { Viewer as ResiumViewer, type CesiumComponentRef } from "resium";
 import {
   Viewer as CesiumViewer,
-  createWorldTerrainAsync,
   createWorldImageryAsync,
   OpenStreetMapImageryProvider,
 } from "cesium";
@@ -35,10 +34,13 @@ export default function App() {
       if (!viewer || ctrlRef.current) return;
       clearInterval(t);
 
-      // Base imagery + terrain (ion when a token is present, free fallback otherwise).
+      // Satellite imagery on a flat WGS84 ellipsoid. Cesium World Terrain is
+      // intentionally NOT used: the local drone-GPS reality meshes disagree with
+      // the global DTM (geoid undulation ~-99 m at Galle), which buries and
+      // black-renders the buildings. Each mesh is snapped just above the
+      // imagery-draped ellipsoid instead.
       if (HAS_ION) {
         viewer.imageryLayers.addImageryProvider(await createWorldImageryAsync());
-        viewer.terrainProvider = await createWorldTerrainAsync();
       } else {
         viewer.imageryLayers.addImageryProvider(
           new OpenStreetMapImageryProvider({ url: "https://tile.openstreetmap.org/" })

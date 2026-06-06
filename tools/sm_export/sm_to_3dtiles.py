@@ -14,10 +14,10 @@ Pipeline
    the model centroid, and emit the ENU->ECEF frame as the tileset root transform.
    This is rigorous horizontally (exact inverse Transverse Mercator) and correct
    vertically up to the (locally constant) EGM96 geoid undulation, which is logged.
-4. Write per-node glTF primitives (each keeps its own JPEG texture/material) into
-   one GLB, and a tileset.json with the ECEF transform + bounding box.
+4. Write one glTF/GLB per leaf node (each keeps its own JPEG texture/material),
+    then build a tileset.json with child tiles and padded bounding spheres.
 
-Output: <out_dir>/<name>/tileset.json, <out_dir>/<name>/content.glb,
+Output: <out_dir>/<name>/tileset.json, <out_dir>/<name>/nodes/node_<id>.glb,
         <out_dir>/<name>/model.json (georef registry record).
 """
 
@@ -26,6 +26,7 @@ from __future__ import annotations
 import json
 import math
 import os
+import shutil
 import sqlite3
 import struct
 import sys
@@ -102,6 +103,79 @@ def _pad4(buf: bytearray) -> None:
         buf.append(0)
 
 
+def _sphere_from_bounds(bounds_min: np.ndarray, bounds_max: np.ndarray,
+                        min_padding: float = 2.0, padding_ratio: float = 0.08):
+    center = (bounds_min + bounds_max) / 2
+    radius = float(np.linalg.norm(bounds_max - bounds_min) / 2)
+    radius += max(min_padding, radius * padding_ratio)
+    return center, radius
+
+
+def _build_leaf_glb(node_name: str, gpos: np.ndarray, guv: np.ndarray,
+                    tri: np.ndarray, jpeg: bytes):
+    bin_buf = bytearray()
+    buffer_views: list[dict] = []
+    accessors: list[dict] = []
+
+    def add_view(data: bytes, target: int | None = None) -> int:
+        _pad4(bin_buf)
+        offset = len(bin_buf)
+        bin_buf.extend(data)
+        view = {"buffer": 0, "byteOffset": offset, "byteLength": len(data)}
+        if target is not None:
+            view["target"] = target
+        buffer_views.append(view)
+        return len(buffer_views) - 1
+
+    pmin = gpos.min(axis=0)
+    pmax = gpos.max(axis=0)
+
+    pos_view = add_view(gpos.tobytes(), target=34962)
+    accessors.append({"bufferView": pos_view, "componentType": 5126,
+                      "count": int(gpos.shape[0]), "type": "VEC3",
+                      "min": pmin.tolist(), "max": pmax.tolist()})
+
+    uv_view = add_view(guv.tobytes(), target=34962)
+    accessors.append({"bufferView": uv_view, "componentType": 5126,
+                      "count": int(guv.shape[0]), "type": "VEC2"})
+
+    idx_view = add_view(tri.tobytes(), target=34963)
+    accessors.append({"bufferView": idx_view, "componentType": 5125,
+                      "count": int(tri.shape[0]), "type": "SCALAR"})
+
+    img_view = add_view(jpeg)
+    gltf = {
+        "asset": {"version": "2.0", "generator": "sm_to_3dtiles"},
+        "extensionsUsed": ["KHR_materials_unlit"],
+        "scene": 0,
+        "scenes": [{"nodes": [0]}],
+        "nodes": [{"mesh": 0, "name": node_name}],
+        "meshes": [{"primitives": [{
+            "attributes": {"POSITION": 0, "TEXCOORD_0": 1},
+            "indices": 2,
+            "material": 0,
+        }]}],
+        "materials": [{
+            "pbrMetallicRoughness": {
+                "baseColorTexture": {"index": 0},
+                "metallicFactor": 0.0,
+                "roughnessFactor": 1.0,
+            },
+            "doubleSided": True,
+            "extensions": {"KHR_materials_unlit": {}},
+            "name": node_name,
+        }],
+        "textures": [{"sampler": 0, "source": 0}],
+        "images": [{"bufferView": img_view, "mimeType": "image/jpeg"}],
+        "samplers": [{"magFilter": 9729, "minFilter": 9987,
+                      "wrapS": 10497, "wrapT": 10497}],
+        "accessors": accessors,
+        "bufferViews": buffer_views,
+        "buffers": [{"byteLength": len(bin_buf)}],
+    }
+    return gltf, bin_buf
+
+
 def convert(sm_path: str, out_dir: str, name: str, place: str = "") -> dict:
     conn = sqlite3.connect(sm_path)
     cur = conn.cursor()
@@ -117,34 +191,17 @@ def convert(sm_path: str, out_dir: str, name: str, place: str = "") -> dict:
     east, north, up = enu_basis(lon0, lat0)
     rot_t = np.vstack([east, north, up])  # rows = ENU axes; local = rot_t @ (ecef-O)
 
-    # GLB assembly buffers
-    bin_buf = bytearray()
-    buffer_views: list[dict] = []
-    accessors: list[dict] = []
-    images: list[dict] = []
-    textures: list[dict] = []
-    materials: list[dict] = []
-    primitives: list[dict] = []
-
-    def add_view(data: bytes, target: int | None = None) -> int:
-        _pad4(bin_buf)
-        offset = len(bin_buf)
-        bin_buf.extend(data)
-        view = {"buffer": 0, "byteOffset": offset, "byteLength": len(data)}
-        if target is not None:
-            view["target"] = target
-        buffer_views.append(view)
-        return len(buffer_views) - 1
-
-    gmin = np.array([np.inf] * 3)
-    gmax = np.array([-np.inf] * 3)
     tile_min = np.array([np.inf] * 3)
     tile_max = np.array([-np.inf] * 3)
     total_v = total_t = 0
     up_accum: list = []   # local ENU Up (elevation) of every vertex, for robust base
+    children: list[dict] = []
 
     out_model = os.path.join(out_dir, name)
-    os.makedirs(out_model, exist_ok=True)
+    if os.path.isdir(out_model):
+        shutil.rmtree(out_model)
+    nodes_dir = os.path.join(out_model, "nodes")
+    os.makedirs(nodes_dir, exist_ok=True)
 
     for nid in leaves:
         cur.execute("SELECT PointData, IndexData FROM SMPoint WHERE NodeId=?", (nid,))
@@ -185,42 +242,23 @@ def convert(sm_path: str, out_dir: str, name: str, place: str = "") -> dict:
         guv[:, 0] = up_uv[:, 0]
         guv[:, 1] = 1.0 - up_uv[:, 1]         # glTF texcoord origin = top-left
 
-        pmin = gpos.min(axis=0)
-        pmax = gpos.max(axis=0)
-        gmin = np.minimum(gmin, pmin)
-        gmax = np.maximum(gmax, pmax)
         up_accum.append(gpos[:, 1].copy())   # gpos[:,1] = Up = elevation
 
-        pos_view = add_view(gpos.tobytes(), target=34962)
-        accessors.append({"bufferView": pos_view, "componentType": 5126,
-                          "count": int(gpos.shape[0]), "type": "VEC3",
-                          "min": pmin.tolist(), "max": pmax.tolist()})
-        a_pos = len(accessors) - 1
+        node_name = f"node_{nid}"
+        node_uri = f"nodes/{node_name}.glb"
+        gltf, leaf_bin = _build_leaf_glb(node_name, gpos, guv, tri, jpeg)
+        _write_glb(os.path.join(out_model, node_uri), gltf, leaf_bin)
 
-        uv_view = add_view(guv.tobytes(), target=34962)
-        accessors.append({"bufferView": uv_view, "componentType": 5126,
-                          "count": int(guv.shape[0]), "type": "VEC2"})
-        a_uv = len(accessors) - 1
-
-        idx_view = add_view(tri.tobytes(), target=34963)
-        accessors.append({"bufferView": idx_view, "componentType": 5125,
-                          "count": int(tri.shape[0]), "type": "SCALAR"})
-        a_idx = len(accessors) - 1
-
-        img_view = add_view(jpeg)
-        images.append({"bufferView": img_view, "mimeType": "image/jpeg"})
-        textures.append({"sampler": 0, "source": len(images) - 1})
-        materials.append({
-            "pbrMetallicRoughness": {
-                "baseColorTexture": {"index": len(textures) - 1},
-                "metallicFactor": 0.0, "roughnessFactor": 1.0},
-            "doubleSided": True,
-            "extensions": {"KHR_materials_unlit": {}},
-            "name": f"node{nid}"})
-
-        primitives.append({
-            "attributes": {"POSITION": a_pos, "TEXCOORD_0": a_uv},
-            "indices": a_idx, "material": len(materials) - 1})
+        leaf_min = local.min(axis=0)
+        leaf_max = local.max(axis=0)
+        leaf_center, leaf_radius = _sphere_from_bounds(leaf_min, leaf_max)
+        children.append({
+            "boundingVolume": {"sphere": [leaf_center[0], leaf_center[1], leaf_center[2], leaf_radius]},
+            "geometricError": 0.0,
+            "refine": "ADD",
+            "content": {"uri": node_uri},
+            "extras": {"nodeId": int(nid), "vertices": int(gpos.shape[0]), "triangles": int(tri.shape[0] // 3)},
+        })
 
         total_v += int(gpos.shape[0])
         total_t += int(tri.shape[0] // 3)
@@ -234,26 +272,6 @@ def convert(sm_path: str, out_dir: str, name: str, place: str = "") -> dict:
     base_height_local = float(np.percentile(up_all, 1.0))
     top_height_local = float(np.percentile(up_all, 99.0))
 
-    gltf = {
-        "asset": {"version": "2.0", "generator": "sm_to_3dtiles"},
-        "extensionsUsed": ["KHR_materials_unlit"],
-        "scene": 0,
-        "scenes": [{"nodes": [0]}],
-        "nodes": [{"mesh": 0, "name": name}],
-        "meshes": [{"primitives": primitives}],
-        "materials": materials,
-        "textures": textures,
-        "images": images,
-        "samplers": [{"magFilter": 9729, "minFilter": 9987,
-                      "wrapS": 10497, "wrapT": 10497}],
-        "accessors": accessors,
-        "bufferViews": buffer_views,
-        "buffers": [{"byteLength": len(bin_buf)}],
-    }
-
-    glb_path = os.path.join(out_model, "content.glb")
-    _write_glb(glb_path, gltf, bin_buf)
-
     # tileset root transform: ENU local -> ECEF (column-major 4x4)
     transform = [
         east[0], east[1], east[2], 0.0,
@@ -261,21 +279,18 @@ def convert(sm_path: str, out_dir: str, name: str, place: str = "") -> dict:
         up[0], up[1], up[2], 0.0,
         origin[0], origin[1], origin[2], 1.0,
     ]
-    center = ((tile_min + tile_max) / 2).tolist()
-    half = ((tile_max - tile_min) / 2).tolist()
-    box = [center[0], center[1], center[2],
-           half[0], 0, 0, 0, half[1], 0, 0, 0, half[2]]
-    geo_err = float(np.linalg.norm(tile_max - tile_min))
+    root_center, root_radius = _sphere_from_bounds(tile_min, tile_max, min_padding=10.0, padding_ratio=0.12)
+    geo_err = float(root_radius * 2)
 
     tileset = {
         "asset": {"version": "1.1"},
         "geometricError": geo_err,
         "root": {
             "transform": transform,
-            "boundingVolume": {"box": box},
-            "geometricError": 0.0,
+            "boundingVolume": {"sphere": [root_center[0], root_center[1], root_center[2], root_radius]},
+            "geometricError": geo_err,
             "refine": "ADD",
-            "content": {"uri": "content.glb"},
+            "children": children,
         },
     }
     with open(os.path.join(out_model, "tileset.json"), "w", encoding="utf-8") as f:
@@ -299,6 +314,8 @@ def convert(sm_path: str, out_dir: str, name: str, place: str = "") -> dict:
         "gltf_axis_order": "[East, Up, -North] (Y-up); elevation = index 1",
         "base_height_local_m": base_height_local,
         "top_height_local_m": top_height_local,
+        "tile_layout": "per-leaf",
+        "tile_count": len(children),
         "vertices": total_v,
         "triangles": total_t,
         "leaf_nodes": len(leaves),
@@ -307,7 +324,7 @@ def convert(sm_path: str, out_dir: str, name: str, place: str = "") -> dict:
                          "vertical = EGM96 orthometric (~5-15 m absolute, terrain-snap in viewer)",
         "geoid_grid_applied": bool(abs(n_geoid) > 1e-6),
         "tileset": "tileset.json",
-        "content": "content.glb",
+        "content": "nodes/*.glb",
     }
     with open(os.path.join(out_model, "model.json"), "w", encoding="utf-8") as f:
         json.dump(record, f, indent=2)
@@ -316,7 +333,9 @@ def convert(sm_path: str, out_dir: str, name: str, place: str = "") -> dict:
     print(f"  leaves={len(leaves)} verts={total_v:,} tris={total_t:,}")
     print(f"  centroid UTM44N = ({ec:.2f}, {nc:.2f}, {zc:.2f})  geoidN={n_geoid:.2f} m")
     print(f"  centroid WGS84  = lon {lon0:.6f}, lat {lat0:.6f}, h_ell {h_ell0:.2f}")
-    print(f"  GLB  = {glb_path} ({os.path.getsize(glb_path)/1024/1024:.1f} MB)")
+    tile_bytes = sum(os.path.getsize(os.path.join(root, file))
+                     for root, _, files in os.walk(out_model) for file in files)
+    print(f"  tiles = {out_model} ({len(children)} leaf GLBs, {tile_bytes/1024/1024:.1f} MB)")
     return record
 
 

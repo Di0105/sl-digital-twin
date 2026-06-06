@@ -36,11 +36,13 @@
   "gltf_axis_order": "[East, Up, -North] (Y-up); elevation = index 1",
   "base_height_local_m": -8.625322341918945,
   "top_height_local_m": 10.428744316101074,
+  "tile_layout": "per-leaf",
+  "tile_count": 18,
   "vertices": 217437,
   "triangles": 372280,
   "leaf_nodes": 18,
   "georef_method": "drone-GPS (PositionMetadata), no GCP/RTK; projection exact, absolute horizontal ~few m (drone-GPS), vertical = EGM96 orthometric (~5-15 m absolute, terrain-snap in viewer)",
   "geoid_grid_applied": true,
   "tileset": "tileset.json",
-  "content": "content.glb"
+  "content": "nodes/*.glb"
 }

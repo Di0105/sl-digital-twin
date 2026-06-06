@@ -17,7 +17,7 @@ MODELS = [
      "Yellow House", "Galle Dutch Fort"),
     ("church", os.path.join(ROOT, "church_final", "Production_3.3sm"),
      "Galle Fort Church", "Galle Dutch Fort"),
-    ("lighthouse", os.path.join(PRODUCTIONS, "lighthouse_combined", "Production_1.3sm"),
+    ("lighthouse", os.path.join(PRODUCTIONS, "Production_2_Trial", "Production_2_Trial.3sm"),
      "Galle Lighthouse", "Galle Dutch Fort"),
     ("university", os.path.join(PRODUCTIONS, "university_new", "Production_1.3sm"),
      "University (Peradeniya area)", "Kandy region"),

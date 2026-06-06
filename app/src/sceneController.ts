@@ -1,4 +1,4 @@
-import {
+﻿import {
   BoundingSphere,
   Cartesian2,
   Cartesian3,
@@ -11,6 +11,8 @@ import {
   ScreenSpaceEventHandler,
   ScreenSpaceEventType,
   Cesium3DTileset,
+  ClippingPolygon,
+  ClippingPolygonCollection,
   Ellipsoid,
   sampleTerrainMostDetailed,
   defined,
@@ -36,6 +38,7 @@ export class SceneController {
   private tilesets = new Map<string, Cesium3DTileset>();
   private labels = new Map<string, Entity>();
   private snapOffset = new Map<string, number>();
+  private clipped = new Set<string>();
   private probeHandler?: ScreenSpaceEventHandler;
   activeId: string | null = null;
 
@@ -44,12 +47,19 @@ export class SceneController {
     viewer.scene.globe.depthTestAgainstTerrain = false;
     viewer.scene.screenSpaceCameraController.enableCollisionDetection = false;
     viewer.scene.screenSpaceCameraController.minimumZoomDistance = 1;
+    // Cut holes in the world-terrain surface under each reality mesh so the
+    // building is never occluded/sliced by terrain whose height disagrees with
+    // the unreliable drone-GPS Z baked into the .3sm source.
+    viewer.scene.globe.clippingPolygons = new ClippingPolygonCollection();
   }
 
   async loadRegistry(): Promise<ModelRecord[]> {
     const res = await fetch(appAssetUrl("tiles/registry.json"));
     this.models = (await res.json()) as ModelRecord[];
-    for (const m of this.models) this.addLabel(m);
+    for (const m of this.models) {
+      this.addLabel(m);
+      this.clipTerrainUnder(m);
+    }
     return this.models;
   }
 
@@ -112,8 +122,41 @@ export class SceneController {
     });
     this.viewer.scene.primitives.add(tileset);
     this.tilesets.set(m.id, tileset);
+    this.clipTerrainUnder(m);
     await this.terrainSnap(m, tileset);
     return tileset;
+  }
+
+  /** Remove the globe/terrain surface inside the model footprint so world
+   *  terrain cannot bury or slice through the reality mesh. */
+  private clipTerrainUnder(m: ModelRecord): void {
+    const polygons = this.viewer.scene.globe.clippingPolygons;
+    if (!polygons || this.clipped.has(m.id)) return;
+    const { lon, lat, h_ellipsoidal } = m.centroid_wgs84;
+    const frame = Transforms.eastNorthUpToFixedFrame(
+      Cartesian3.fromDegrees(lon, lat, h_ellipsoidal)
+    );
+    const min = m.bbox_local_enu_m.min;
+    const max = m.bbox_local_enu_m.max;
+    const pad = 4;
+    const e0 = min[0] - pad;
+    const e1 = max[0] + pad;
+    const n0 = min[1] - pad;
+    const n1 = max[1] + pad;
+    const em = (e0 + e1) / 2;
+    const nm = (n0 + n1) / 2;
+    // CCW ring with edge midpoints so the hole follows the footprint cleanly.
+    const ring: [number, number][] = [
+      [e0, n0], [em, n0], [e1, n0],
+      [e1, nm], [e1, n1],
+      [em, n1], [e0, n1],
+      [e0, nm],
+    ];
+    const positions = ring.map(([e, n]) =>
+      Matrix4.multiplyByPoint(frame, new Cartesian3(e, n, 0), new Cartesian3())
+    );
+    polygons.add(new ClippingPolygon({ positions }));
+    this.clipped.add(m.id);
   }
 
   private visualBoundingSphere(m: ModelRecord, tileset: Cesium3DTileset): BoundingSphere {
