@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { Viewer as ResiumViewer, type CesiumComponentRef } from "resium";
 import {
   Viewer as CesiumViewer,
-  createWorldImageryAsync,
   UrlTemplateImageryProvider,
 } from "cesium";
 import { HAS_ION } from "./cesiumConfig";
@@ -39,20 +38,17 @@ export default function App() {
       // the global DTM (geoid undulation ~-99 m at Galle), which buries and
       // black-renders the buildings. Each mesh is snapped just above the
       // imagery-draped ellipsoid instead.
-      if (HAS_ION) {
-        viewer.imageryLayers.addImageryProvider(await createWorldImageryAsync());
-      } else {
-        // No Cesium ion token (e.g. GitHub Pages build): fall back to Esri World
-        // Imagery, which is token-free and still satellite (not OSM road tiles).
-        viewer.imageryLayers.addImageryProvider(
-          new UrlTemplateImageryProvider({
-            url:
-              "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-            maximumLevel: 19,
-            credit: "Imagery © Esri, Maxar, Earthstar Geographics",
-          })
-        );
-      }
+      // Cesium ion's Bing-based World Imagery was retired, so always use the
+      // token-free Esri World Imagery (reliable satellite, not OSM road tiles).
+      // The ion token, when present, only hides the banner / enables ion assets.
+      viewer.imageryLayers.addImageryProvider(
+        new UrlTemplateImageryProvider({
+          url:
+            "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+          maximumLevel: 19,
+          credit: "Imagery (c) Esri, Maxar, Earthstar Geographics",
+        })
+      );
       if (cancelled) return;
 
       const ctrl = new SceneController(viewer);
