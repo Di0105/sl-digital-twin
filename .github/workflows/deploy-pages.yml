@@ -39,6 +39,7 @@ jobs:
         working-directory: app
         env:
           GITHUB_PAGES_BASE: /sl-digital-twin/
+          VITE_CESIUM_ION_TOKEN: ${{ secrets.VITE_CESIUM_ION_TOKEN }}
         run: npm run build
 
       - name: Copy 3D Tiles

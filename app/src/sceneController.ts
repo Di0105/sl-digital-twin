@@ -11,8 +11,6 @@ import {
   ScreenSpaceEventHandler,
   ScreenSpaceEventType,
   Cesium3DTileset,
-  CustomShader,
-  CustomShaderTranslucencyMode,
   Ellipsoid,
   sampleTerrainMostDetailed,
   defined,
@@ -27,22 +25,6 @@ import { lonLatToUtm44 } from "./proj";
 
 const LABEL_COLOR = Color.fromCssColorString("#ffb703");
 const TERRAIN_CLEARANCE_M = 1.5;
-
-// ContextCapture packs textured patches over a BLACK atlas background and assigns
-// untextured "no-data" faces (skirts, occluded undersides) to that black padding.
-// Raw glTF therefore renders those faces as solid black shards. Discard near-black
-// fragments so the mesh shows only real texture, matching the native CC viewer.
-const DISCARD_BLACK_SHADER = new CustomShader({
-  translucencyMode: CustomShaderTranslucencyMode.TRANSLUCENT,
-  fragmentShaderText: [
-    "void fragmentMain(FragmentInput fsInput, inout czm_modelMaterial material) {",
-    "  vec3 c = material.diffuse;",
-    "  if (c.r + c.g + c.b < 0.09) {",
-    "    material.alpha = 0.0;",
-    "  }",
-    "}",
-  ].join("\n"),
-});
 
 function appAssetUrl(path: string): string {
   return `${import.meta.env.BASE_URL}${path.replace(/^\/+/, "")}`;
@@ -130,7 +112,6 @@ export class SceneController {
     const tileset = await Cesium3DTileset.fromUrl(appAssetUrl(`tiles/${m.id}/tileset.json`), {
       maximumScreenSpaceError: 2,
     });
-    tileset.customShader = DISCARD_BLACK_SHADER;
     this.viewer.scene.primitives.add(tileset);
     this.tilesets.set(m.id, tileset);
     await this.terrainSnap(m, tileset);
